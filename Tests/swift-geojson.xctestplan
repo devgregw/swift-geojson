@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "299FA926-49B3-482C-894A-89D3C9B0F0BC",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "GeoJSONTests",
+        "name" : "GeoJSONTests"
+      }
+    }
+  ],
+  "version" : 1
+}
