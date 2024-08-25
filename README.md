@@ -1,4 +1,4 @@
-# swift-geojson
+# swift-geojson ![Build status](https://github.com/devgregw/swift-geojson/actions/workflows/swift.yml/badge.svg)
 
 `swift-geojson` is a simplisitic and cross-platform GeoJSON implementation in pure Swift and is largely based on [RFC 7946](https://datatracker.ietf.org/doc/html/rfc7946).
 
