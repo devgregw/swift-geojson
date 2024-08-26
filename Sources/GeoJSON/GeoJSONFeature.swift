@@ -26,8 +26,7 @@ extension GeoJSONFeature: Decodable {
     }
     
     private static func decodeProperties(from decoder: any Decoder) throws -> [String: Any] {
-        guard let key = CodingUserInfoKey(rawValue: "jsonData"),
-              let jsonData = decoder.userInfo[key] as? [String: Any],
+        guard let jsonData = decoder.userInfo[GeoJSONDecoder.UserInfoKeys.jsonData] as? [String: Any],
               let type = jsonData["type"] as? String else {
             throw GeoJSONDecodingError.userInfoInvalid
         }
