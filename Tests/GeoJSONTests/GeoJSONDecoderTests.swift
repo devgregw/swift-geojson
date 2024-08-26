@@ -8,9 +8,9 @@ final class GeoJSONTests: XCTestCase {
         decoder = .init()
     }
     
-    private func object(forJSON json: String) throws -> GeoJSONObject {
+    private func object(forJSON json: String, options: GeoJSONDecoderOptions = .none) throws -> GeoJSONObject {
         let data = json.data(using: .utf8) ?? Data()
-        return try decoder.decode(from: data)
+        return try decoder.decode(data, options: options)
     }
     
     func testDecodePoint() throws {
@@ -30,6 +30,17 @@ final class GeoJSONTests: XCTestCase {
         }
         """
         XCTAssertThrowsError(try object(forJSON: invalid))
+    }
+    
+    func testDecodePointSwapped() throws {
+        let decoded = try object(forJSON: """
+        {
+            "type": "Point",
+            "coordinates": [100.0, 0.0]
+        }
+        """, options: .swapLatitudeLongitude)
+        let expected = GeoJSONObject.geometry(.point(.init(latitude: 0.0, longitude: 100.0)))
+        XCTAssertEqual(decoded, expected)
     }
     
     func testDecodeLineString() throws {

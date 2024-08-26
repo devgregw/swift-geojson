@@ -20,9 +20,14 @@ public struct GeoJSONPosition: Hashable, Sendable {
 extension GeoJSONPosition: Decodable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-        let values = try container.decode([Double].self)
+        var values = try container.decode([Double].self)
         guard values.count >= 2 else {
             throw GeoJSONDecodingError.notEnoughMembers(values, got: values.count, expected: 2)
+        }
+        let options = decoder.userInfo[GeoJSONDecoder.UserInfoKeys.options] as? GeoJSONDecoderOptions
+        let swap = options?.contains(.swapLatitudeLongitude) ?? false
+        if swap {
+            values.reverse()
         }
         latitude = values[0]
         longitude = values[1]
