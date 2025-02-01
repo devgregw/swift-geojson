@@ -7,19 +7,21 @@
 
 import Foundation
 
-public enum GeoJSONGeometry: Hashable, Sendable {
+public indirect enum GeoJSONGeometry: Hashable, Sendable {
     case point(GeoJSONPosition)
     case multiPoint([GeoJSONPosition])
     case lineString(GeoJSONLineString)
     case multiLineString([GeoJSONLineString])
     case polygon(GeoJSONPolygon)
     case multiPolygon([GeoJSONPolygon])
+    case geometryCollection([GeoJSONGeometry])
 }
 
 extension GeoJSONGeometry: Decodable {
     private enum CodingKeys: String, CodingKey {
         case type
         case coordinates
+        case geometries
     }
     
     private func validate(lineString: GeoJSONLineString) throws {
@@ -54,6 +56,8 @@ extension GeoJSONGeometry: Decodable {
             self = .polygon(try container.decode(GeoJSONPolygon.self, forKey: .coordinates))
         case "MultiPolygon":
             self = .multiPolygon(try container.decode([GeoJSONPolygon].self, forKey: .coordinates))
+        case "GeometryCollection":
+            self = .geometryCollection(try container.decode([GeoJSONGeometry].self, forKey: .geometries))
         default:
             throw GeoJSONDecodingError.unexpectedType(type)
         }
