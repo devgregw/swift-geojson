@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GeoJSONDecoderOptions: OptionSet {
+public struct GeoJSONDecoderOptions: OptionSet, Sendable {
     public let rawValue: Int
     
     public init(rawValue: Int) {
