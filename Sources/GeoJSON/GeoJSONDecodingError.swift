@@ -10,7 +10,7 @@ import Foundation
 public enum GeoJSONDecodingError: Error, CustomStringConvertible {
     case userInfoInvalid
     case unexpectedType(String)
-    case notEnoughMembers([Any], got: Int, expected: Int)
+    case notEnoughMembers([any Sendable], got: Int, expected: Int)
     
     public var description: String {
         switch self {
