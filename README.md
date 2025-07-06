@@ -4,7 +4,7 @@
 
 ## Motifivation
 
-`swift-geojson` is used in my repo [SPCApp](https://github.com/devgregw/SPCApp) to parse GeoJSON data from the National Weather Service. While MapKit provides [MKGeoJSONDecoder](https://developer.apple.com/documentation/mapkit/mkgeojsondecoder), it is unavailable on watchOS. My implementation is intended to provide a more Swifty syntax such as enums with associated values.
+`swift-geojson` is used in my repo [Redzone](https://github.com/devgregw/Redzone) to parse GeoJSON data from the National Weather Service. While MapKit provides [MKGeoJSONDecoder](https://developer.apple.com/documentation/mapkit/mkgeojsondecoder), it is unavailable on watchOS. My implementation is intended to provide a more Swifty syntax such as enums with associated values.
 
 ## Limitations
 
