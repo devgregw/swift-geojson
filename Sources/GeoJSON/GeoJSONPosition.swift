@@ -33,6 +33,3 @@ extension GeoJSONPosition: Decodable {
         longitude = values[1]
     }
 }
-
-public typealias GeoJSONLineString = [GeoJSONPosition]
-public typealias GeoJSONLinearRing = [GeoJSONPosition]
