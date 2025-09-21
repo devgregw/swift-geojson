@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum GeoJSONDecodingError: Error, CustomStringConvertible {
+public enum GeoJSONDecodingError: Error, Equatable, CustomStringConvertible {
     case userInfoInvalid
     case unexpectedType(String)
     case notEnoughMembers([any Sendable], got: Int, expected: Int)
@@ -21,5 +21,9 @@ public enum GeoJSONDecodingError: Error, CustomStringConvertible {
         case .notEnoughMembers(_, let got, let expected):
             "Not enough members of array (got \(got), expected \(expected))."
         }
+    }
+
+    public static func == (lhs: GeoJSONDecodingError, rhs: GeoJSONDecodingError) -> Bool {
+        lhs.description == rhs.description
     }
 }
