@@ -1,49 +1,58 @@
-import XCTest
-@testable import GeoJSON
+//
+//  GeoJSONDecoderTests.swift
+//  swift-geojson
+//
+//  Created by Greg Whatley on 8/24/24.
+//
 
-final class GeoJSONTests: XCTestCase {
-    private var decoder: GeoJSONDecoder!
-    
-    override func setUp() {
-        decoder = .init()
-    }
-    
+import Foundation
+@testable import GeoJSON
+import Testing
+
+@Suite("GeoJSONDecoder") struct GeoJSONDecoderTests {
     private func object(forJSON json: String, options: GeoJSONDecoderOptions = .none) throws -> GeoJSONObject {
         let data = json.data(using: .utf8) ?? Data()
-        return try decoder.decode(data, options: options)
+        return try GeoJSONDecoder().decode(data, options: options)
     }
-    
-    func testDecodePoint() throws {
+
+    @Test("Decode a point") func decodePoint() throws {
         let decoded = try object(forJSON: """
         {
             "type": "Point",
             "coordinates": [100.0, 0.0]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.point(.init(latitude: 100.0, longitude: 0.0)))
-        XCTAssertEqual(decoded, expected)
-        
+
+        #expect(decoded == expected)
+
         let invalid = """
         {
             "type": "Point",
             "coordinates": [100.0]
         }
         """
-        XCTAssertThrowsError(try object(forJSON: invalid))
+
+        #expect(throws: GeoJSONDecodingError.self) {
+            try object(forJSON: invalid)
+        }
     }
-    
-    func testDecodePointSwapped() throws {
+
+    @Test("Decode a point with coordinates swapped") func decodePointSwapped() throws {
         let decoded = try object(forJSON: """
         {
             "type": "Point",
             "coordinates": [100.0, 0.0]
         }
         """, options: .swapLatitudeLongitude)
+
         let expected = GeoJSONObject.geometry(.point(.init(latitude: 0.0, longitude: 100.0)))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testDecodeLineString() throws {
+
+    @Test("Decode a line string") func decodeLineString() throws {
         let decoded = try object(forJSON: """
         {
             "type": "LineString",
@@ -53,21 +62,26 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.lineString([
             .init(latitude: 100.0, longitude: 0), .init(latitude: 101.0, longitude: 1.0)
         ]))
-        XCTAssertEqual(decoded, expected)
-        
+
+        #expect(decoded == expected)
+
         let invalid = """
         {
             "type": "LineString",
             "coordinates": []
         }
         """
-        XCTAssertThrowsError(try object(forJSON: invalid))
+
+        #expect(throws: GeoJSONDecodingError.self) {
+            try object(forJSON: invalid)
+        }
     }
-    
-    func testDecodePolygonNoHoles() throws {
+
+    @Test("Decode a polygon w/o holes") func decodePolygonNoHoles() throws {
         let decoded = try object(forJSON: """
         {
             "type": "Polygon",
@@ -82,6 +96,7 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.polygon(.init([
             .init(latitude: 100.0, longitude: 0.0),
             .init(latitude: 101.0, longitude: 0.0),
@@ -89,10 +104,12 @@ final class GeoJSONTests: XCTestCase {
             .init(latitude: 100.0, longitude: 1.0),
             .init(latitude: 100.0, longitude: 0.0)
         ])))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
+
     }
-    
-    func testDecodePolygonWithHoles() throws {
+
+    @Test("Decode a polygon w/ holes") func decodePolygonWithHoles() throws {
         let decoded = try object(forJSON: """
         {
             "type": "Polygon",
@@ -114,6 +131,7 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.polygon(.init(exterior: [
             .init(latitude: 100.0, longitude: 0.0),
             .init(latitude: 101.0, longitude: 0.0),
@@ -129,10 +147,11 @@ final class GeoJSONTests: XCTestCase {
                 .init(latitude: 100.8, longitude: 0.8)
             ]
         ])))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testMultiPoint() throws {
+
+    @Test("Decode a multi point") func decodeMultiPoint() throws {
         let decoded = try object(forJSON: """
         {
             "type": "MultiPoint",
@@ -142,14 +161,16 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.multiPoint([
             .init(latitude: 100.0, longitude: 0.0),
             .init(latitude: 101.0, longitude: 1.0)
         ]))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testMultiLineString() throws {
+
+    @Test("Decode a multi line string") func decodeMultiLineString() throws {
         let decoded = try object(forJSON: """
         {
             "type": "MultiLineString",
@@ -165,6 +186,7 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.multiLineString([
             [
                 .init(latitude: 100.0, longitude: 0.0),
@@ -175,10 +197,11 @@ final class GeoJSONTests: XCTestCase {
                 .init(latitude: 103.0, longitude: 3.0)
             ]
         ]))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testMultiPolygon() throws {
+
+    @Test("Decode a multi polygon") func decodeMultiPolygon() throws {
         let decoded = try object(forJSON: """
         {
             "type": "MultiPolygon",
@@ -211,15 +234,16 @@ final class GeoJSONTests: XCTestCase {
             ]
         }
         """)
+
         let expected = GeoJSONObject.geometry(.multiPolygon([
-            .init([
+            GeoJSONPolygon([
                 .init(latitude: 102.0, longitude: 2.0),
                 .init(latitude: 103.0, longitude: 2.0),
                 .init(latitude: 103.0, longitude: 3.0),
                 .init(latitude: 102.0, longitude: 3.0),
                 .init(latitude: 102.0, longitude: 2.0)
             ]),
-            .init(exterior: [
+            GeoJSONPolygon(exterior: [
                 .init(latitude: 100.0, longitude: 0.0),
                 .init(latitude: 101.0, longitude: 0.0),
                 .init(latitude: 101.0, longitude: 1.0),
@@ -235,10 +259,11 @@ final class GeoJSONTests: XCTestCase {
                 ]
             ])
         ]))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testDecodeFeature() throws {
+
+    @Test("Decode a feature") func decodeFeature() throws {
         let decoded = try object(forJSON: """
         {
             "type": "Feature",
@@ -257,6 +282,7 @@ final class GeoJSONTests: XCTestCase {
             }
         }
         """)
+
         let expected = GeoJSONObject.feature(.init(geometry: .lineString([
             .init(latitude: 102.0, longitude: 0.0),
             .init(latitude: 103.0, longitude: 1.0),
@@ -266,10 +292,11 @@ final class GeoJSONTests: XCTestCase {
             "prop0": "value0",
             "prop1": "0"
         ]))
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testDecodeGeometryCollection() throws {
+
+    @Test("Decode a geometry collection") func decodeGeometryCollection() throws {
         let decoded = try object(forJSON: """
         {
             "type": "GeometryCollection",
@@ -285,6 +312,7 @@ final class GeoJSONTests: XCTestCase {
             }]
         }
         """)
+
         let expected = GeoJSONObject.geometryCollection([
             .point(.init(latitude: 100.0, longitude: 0.0)),
             .lineString([
@@ -292,10 +320,11 @@ final class GeoJSONTests: XCTestCase {
                 .init(latitude: 102.0, longitude: 1.0)
             ])
         ])
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
-    
-    func testDecodeFeatureCollection() throws {
+
+    @Test("Decode a feature collection") func decodeFeatureCollection() throws {
         let decoded = try object(forJSON: """
         {
            "type": "FeatureCollection",
@@ -346,6 +375,7 @@ final class GeoJSONTests: XCTestCase {
             }]
         }
         """)
+
         let expected = GeoJSONObject.featureCollection([
             .init(geometry: .point(.init(latitude: 102.0, longitude: 0.5)), properties: ["prop0": "value0"]),
             .init(geometry: .lineString([
@@ -368,6 +398,7 @@ final class GeoJSONTests: XCTestCase {
                 "prop1": "{\n    this = that;\n}"
             ])
         ])
-        XCTAssertEqual(decoded, expected)
+
+        #expect(decoded == expected)
     }
 }
