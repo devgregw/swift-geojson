@@ -47,17 +47,17 @@ extension GeoJSONGeometry: Decodable {
         case "Point":
             self = .point(try container.decode(GeoJSONPosition.self, forKey: .coordinates))
         case "MultiPoint":
-            self = .multiPoint(try container.decode([GeoJSONPosition].self, forKey: .coordinates))
+            self = .multiPoint(try container.decodeIfPresent([GeoJSONPosition].self, forKey: .coordinates) ?? [])
         case "LineString":
             self = .lineString(try container.decode(GeoJSONLineString.self, forKey: .coordinates))
         case "MultiLineString":
-            self = .multiLineString(try container.decode([GeoJSONLineString].self, forKey: .coordinates))
+            self = .multiLineString(try container.decodeIfPresent([GeoJSONLineString].self, forKey: .coordinates) ?? [])
         case "Polygon":
             self = .polygon(try container.decode(GeoJSONPolygon.self, forKey: .coordinates))
         case "MultiPolygon":
-            self = .multiPolygon(try container.decode([GeoJSONPolygon].self, forKey: .coordinates))
+            self = .multiPolygon(try container.decodeIfPresent([GeoJSONPolygon].self, forKey: .coordinates) ?? [])
         case "GeometryCollection":
-            self = .geometryCollection(try container.decode([GeoJSONGeometry].self, forKey: .geometries))
+            self = .geometryCollection(try container.decodeIfPresent([GeoJSONGeometry].self, forKey: .geometries) ?? [])
         default:
             throw GeoJSONDecodingError.unexpectedType(type)
         }
