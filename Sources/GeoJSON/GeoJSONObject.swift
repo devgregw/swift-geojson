@@ -34,6 +34,15 @@ public enum GeoJSONObject: Hashable, Sendable {
             nil
         }
     }
+
+    public var isEmpty: Bool {
+        switch self {
+        case .featureCollection(let array): array.isEmpty || array.allSatisfy(\.isEmpty)
+        case .feature(let feature): feature.isEmpty
+        case .geometry(let geometry): geometry.isEmpty
+        case .geometryCollection(let array): array.isEmpty || array.allSatisfy(\.isEmpty)
+        }
+    }
 }
 
 extension GeoJSONObject: Decodable {

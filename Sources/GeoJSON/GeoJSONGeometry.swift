@@ -15,6 +15,16 @@ public indirect enum GeoJSONGeometry: Hashable, Sendable {
     case polygon(GeoJSONPolygon)
     case multiPolygon([GeoJSONPolygon])
     case geometryCollection([GeoJSONGeometry])
+
+    public var isEmpty: Bool {
+        switch self {
+        case .multiPoint(let array): array.isEmpty
+        case .multiLineString(let array): array.isEmpty || array.allSatisfy(\.isEmpty)
+        case .multiPolygon(let array): array.isEmpty
+        case .geometryCollection(let array): array.isEmpty || array.allSatisfy(\.isEmpty)
+        default: false
+        }
+    }
 }
 
 extension GeoJSONGeometry: Decodable {

@@ -33,6 +33,10 @@ public struct GeoJSONLinearRing: Hashable, Sendable {
     public var boundingBox: GeoJSONBoundingBox? {
         .init(bounding: positions)
     }
+
+    public var isEmpty: Bool {
+        positions.isEmpty
+    }
 }
 
 extension GeoJSONLinearRing: ExpressibleByArrayLiteral {
