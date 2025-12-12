@@ -17,6 +17,10 @@ public struct GeoJSONFeature: Hashable, Sendable {
         self.geometry = geometry
         self.properties = properties
     }
+
+    public var isEmpty: Bool {
+        geometry.isEmpty
+    }
 }
 
 extension GeoJSONFeature: Decodable {
