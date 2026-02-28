@@ -278,7 +278,7 @@ import Testing
             },
             "properties": {
                 "prop0": "value0",
-                "prop1": 0.0
+                "prop1": 0.45
             }
         }
         """)
@@ -290,7 +290,7 @@ import Testing
             .init(latitude: 105.0, longitude: 1.0)
         ]), properties: [
             "prop0": "value0",
-            "prop1": "0"
+            "prop1": 0.45
         ]))
 
         #expect(decoded == expected)
@@ -350,7 +350,9 @@ import Testing
                },
                "properties": {
                     "prop0": "value0",
-                    "prop1": 0.0
+                    "prop1": 0.45,
+                    "prop2": 1,
+                    "prop3": true
                 }
             }, {
                 "type": "Feature",
@@ -385,7 +387,9 @@ import Testing
                 .init(latitude: 105.0, longitude: 1.0)
             ]), properties: [
                 "prop0": "value0",
-                "prop1": "0"
+                "prop1": 0.45,
+                "prop2": 1,
+                "prop3": true
             ]),
             .init(geometry: .polygon(.init([
                 .init(latitude: 100.0, longitude: 0.0),
@@ -395,7 +399,9 @@ import Testing
                 .init(latitude: 100.0, longitude: 0.0)
             ])), properties: [
                 "prop0": "value0",
-                "prop1": "{\n    this = that;\n}"
+                "prop1": [
+                    "this": "that"
+                ]
             ])
         ])
 
