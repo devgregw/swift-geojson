@@ -8,8 +8,6 @@
 import Foundation
 
 public struct GeoJSONFeature: Hashable, Sendable {
-    public typealias Properties = [String: String]
-    
     public let geometry: GeoJSONGeometry
     public let properties: Properties
     
@@ -29,28 +27,9 @@ extension GeoJSONFeature: Decodable {
         case properties
     }
     
-    private static func decodeProperties(from decoder: any Decoder) throws -> [String: Any] {
-        guard let jsonData = decoder.userInfo[GeoJSONDecoder.UserInfoKeys.jsonData] as? [String: any Sendable],
-              let type = jsonData["type"] as? String else {
-            throw GeoJSONDecodingError.userInfoInvalid
-        }
-        if type == "Feature",
-           let properties = jsonData["properties"] as? [String: Any] {
-            return properties
-        } else if type == "FeatureCollection",
-                  let idx = decoder.codingPath.last?.intValue,
-                  let features = jsonData["features"] as? [[String: Any]],
-                  features.indices ~= idx,
-                  let properties = features[idx]["properties"] as? [String: Any] {
-            return properties
-        } else {
-            throw GeoJSONDecodingError.userInfoInvalid
-        }
-    }
-    
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.geometry = try container.decode(GeoJSONGeometry.self, forKey: .geometry)
-        self.properties = try Self.decodeProperties(from: decoder).mapValues { String(describing: $0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        self.properties = try container.decodeIfPresent(Properties.self, forKey: .properties) ?? [:]
     }
 }
