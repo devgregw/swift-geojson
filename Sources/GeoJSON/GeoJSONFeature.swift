@@ -8,8 +8,6 @@
 import Foundation
 
 public struct GeoJSONFeature: Hashable, Sendable {
-    public typealias Properties = [String: String]
-    
     public let geometry: GeoJSONGeometry
     public let properties: Properties
     
