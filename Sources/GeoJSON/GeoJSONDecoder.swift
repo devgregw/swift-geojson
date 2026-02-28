@@ -9,14 +9,11 @@ import Foundation
 
 final public class GeoJSONDecoder: JSONDecoder, @unchecked Sendable {
     enum UserInfoKeys {
-        static let jsonData = CodingUserInfoKey(rawValue: "jsonData")!
         static let options = CodingUserInfoKey(rawValue: "options")!
     }
     
     private func setUserInfo(data: Data, options: GeoJSONDecoderOptions) throws {
-        let object = try JSONSerialization.sendableJSONObject(with: data)
         userInfo = [
-            UserInfoKeys.jsonData: object,
             UserInfoKeys.options: options
         ]
     }
